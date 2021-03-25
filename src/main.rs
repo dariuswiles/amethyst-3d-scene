@@ -18,7 +18,7 @@ fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
     let app_root = application_root_dir()?;
-    let resources = app_root.join("assets");
+    let assets_dir = app_root.join("assets");
 
     let mut display_config = DisplayConfig::default();
     display_config.title = "My first Amethyst 3D program".to_string();
@@ -39,7 +39,7 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderPbr3D::default()),
         )?;
 
-    let mut game = Application::new(resources, state::MyGameState, game_data)?;
+    let mut game = Application::new(assets_dir, state::MyGameState, game_data)?;
     game.run();
 
     Ok(())
