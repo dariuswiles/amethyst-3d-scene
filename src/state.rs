@@ -2,7 +2,8 @@ use amethyst::{
     assets::{AssetLoaderSystemData},
     core::transform::{Transform},
     prelude::*,
-    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, rendy, shape,
+    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
+        rendy::mesh::{Normal, Position, Tangent, TexCoord, },
     },
     //window::ScreenDimensions,
 };
@@ -39,7 +40,7 @@ fn init_sphere(world: &mut World) {
     let mesh = world.exec(|loader: AssetLoaderSystemData<'_, Mesh>| {
         loader.load_from_data(
             shape::Shape::Sphere(100, 100)
-                .generate::<(Vec<rendy::mesh::Position>, Vec<rendy::mesh::Normal>, Vec<rendy::mesh::Tangent>, Vec<rendy::mesh::TexCoord>)>(None)
+                .generate::<(Vec<Position>, Vec<Normal>, Vec<Tangent>, Vec<TexCoord>)>(None)
                 .into(),
             (),
         )
@@ -72,7 +73,7 @@ fn init_cube(world: &mut World) {
     let mesh = world.exec(|loader: AssetLoaderSystemData<'_, Mesh>| {
         loader.load_from_data(
             shape::Shape::Cube
-                .generate::<(Vec<rendy::mesh::Position>, Vec<rendy::mesh::Normal>, Vec<rendy::mesh::Tangent>, Vec<rendy::mesh::TexCoord>)>(None)
+                .generate::<(Vec<Position>, Vec<Normal>, Vec<Tangent>, Vec<TexCoord>)>(None)
                 .into(),
             (),
         )
