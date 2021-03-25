@@ -3,10 +3,11 @@ use amethyst::{
     core::transform::{Transform},
     prelude::*,
     renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
-        rendy::mesh::{Normal, Position, Tangent, TexCoord, },
+        rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
     },
     //window::ScreenDimensions,
 };
+
 
 /// A dummy game state that shows 3 sprites.
 pub struct MyGameState;
@@ -70,6 +71,20 @@ fn init_cube(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(-3.0, -2.0, 0.0);
 
+    //let p = Position::from([0.1, 0.1, 0.1]);
+
+    let cube = shape::Shape::Cube;
+    let cube_meshbuilder: MeshBuilder = cube.generate::<(Vec<Position>, Vec<Normal>, Vec<Tangent>, Vec<TexCoord>)>(None);
+    let cube_meshdata = cube_meshbuilder.into();
+
+    let mesh = world.exec(|loader: AssetLoaderSystemData<'_, Mesh>| {
+        loader.load_from_data(
+            cube_meshdata,
+            (),
+        )
+    });
+
+    /* // Compact version of above
     let mesh = world.exec(|loader: AssetLoaderSystemData<'_, Mesh>| {
         loader.load_from_data(
             shape::Shape::Cube
@@ -78,6 +93,7 @@ fn init_cube(world: &mut World) {
             (),
         )
     });
+    */
 
     let material_defaults = world.read_resource::<MaterialDefaults>().0.clone();
     let material = world.exec(|loader: AssetLoaderSystemData<'_, Material>| {
@@ -97,17 +113,6 @@ fn init_cube(world: &mut World) {
         .with(transform)
         .build();
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
