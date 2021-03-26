@@ -1,5 +1,5 @@
 [package]
-name = "my2d"
+name = "amethyst-3d-scene"
 version = "0.1.0"
 authors = ["Darius Wiles <github@dariuswiles.com>"]
 edition = "2018"
