@@ -23,6 +23,7 @@ fn main() -> amethyst::Result<()> {
     let mut display_config = DisplayConfig::default();
     display_config.title = "My first Amethyst 3D program".to_string();
     display_config.dimensions = Some((1000, 800));
+    //display_config.resizable = false;
 
 
     let game_data = GameDataBuilder::default()

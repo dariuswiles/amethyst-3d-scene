@@ -1,6 +1,7 @@
 use amethyst::{
     assets::{AssetLoaderSystemData},
     core::transform::{Transform},
+    input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
         rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
@@ -8,9 +9,13 @@ use amethyst::{
     window::ScreenDimensions,
 };
 
-
-/// A dummy game state that shows 3 sprites.
 pub struct MyGameState;
+
+// Maybe useful for animation:
+// https://mtigley.dev/posts/sprite-animations-with-amethyst/
+//
+
+
 
 impl SimpleState for MyGameState {
 
@@ -26,20 +31,57 @@ impl SimpleState for MyGameState {
         init_cube(state_data.world);
         initialize_light(state_data.world);
     }
+/*
+    fn update(&mut self, state_data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
+        let screen_dimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
+
+        if screen_dimensions.width() != 1000. {
+            println!("User has altered screen dimensions.");
+            //init_camera(state_data.world, screen_dimensions);
+           // println!("{:#?}", *state_data.world.read_resource::<Camera>());
+        }
+
+        Trans::None
+    }
+*/
+
+    fn handle_event(&mut self, mut _state_data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans {
+        amethyst::start_logger(Default::default());
+
+        if let StateEvent::Window(event) = &event {
+            if is_close_requested(&event) {
+                println!("Received window close event");
+                return Trans::Quit;
+            }
+
+            if is_key_down(&event, VirtualKeyCode::Escape) {
+                println!("Escape key pressed");
+                return Trans::Quit;
+            }
+
+            if let Some(event) = get_key(&event) {
+                println!("Received key event: {:?}", event);
+            }
+        }
+
+        Trans::None
+    }
+
 }
 
-/// Creates a camera entity in the `world`.
+/// Create a camera entity in the world.
 fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(0.0, 0.0, 10.0);
 
     world
         .create_entity()
-        .with(Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height()))  // width, height must be dimensions of window to avoid distortion
+        .with(Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height()))
         .with(transform)
         .build();
 }
 
+/// Create a sphere entity and add it to the world.
 fn init_sphere(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(3.0, 3.0, 0.0);
@@ -73,6 +115,7 @@ fn init_sphere(world: &mut World) {
 }
 
 
+/// Create a cube entity and add it to the world.
 fn init_cube(world: &mut World) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(-3.0, -2.0, 0.0);
