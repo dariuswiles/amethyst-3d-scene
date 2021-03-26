@@ -5,7 +5,7 @@ use amethyst::{
     renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
         rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
     },
-    //window::ScreenDimensions,
+    window::ScreenDimensions,
 };
 
 
@@ -15,7 +15,13 @@ pub struct MyGameState;
 impl SimpleState for MyGameState {
 
     fn on_start(&mut self, state_data: StateData<'_, GameData<'_, '_>>) {
-        init_camera(state_data.world);
+
+        // Determine actual screen size so initial camera uses the same aspect ratio as the screen.
+        // Clone so we don't perform an immutable borrow, as that will stop us passing the world mutably to init_*
+        // functions later.
+        let screen_dimensions: ScreenDimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
+
+        init_camera(state_data.world, screen_dimensions);
         init_sphere(state_data.world);
         init_cube(state_data.world);
         initialize_light(state_data.world);
@@ -23,13 +29,13 @@ impl SimpleState for MyGameState {
 }
 
 /// Creates a camera entity in the `world`.
-fn init_camera(world: &mut World) {
+fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(0.0, 0.0, 10.0);
 
     world
         .create_entity()
-        .with(Camera::standard_3d(1000.0, 800.0))  // width, height must be dimensions of window to avoid distortion
+        .with(Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height()))  // width, height must be dimensions of window to avoid distortion
         .with(transform)
         .build();
 }
