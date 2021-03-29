@@ -2,21 +2,15 @@ use amethyst::{
     assets::{AssetLoaderSystemData},
     core::transform::{Transform},
     core::ecs::{EntityBuilder},
+    core::math::Vector3,
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
-    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
-        rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
-    },
+    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape},
+    renderer::rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord},
     window::ScreenDimensions,
 };
 
 pub struct MyGameState;
-
-// Maybe useful for animation:
-// https://mtigley.dev/posts/sprite-animations-with-amethyst/
-//
-
-
 
 impl SimpleState for MyGameState {
 
@@ -70,33 +64,19 @@ impl SimpleState for MyGameState {
 
 }
 
-/* From the docs:
- *   amethyst/specs project - src/world/world_ext.rs:
- *     fn create_entity(&mut self) -> EntityBuilder;
- *
- *
- *   amethyst/specs project - src/world/mod.rs:
- *     pub trait Builder {...}
- *       fn with<C: Component + Send + Sync>(self, c: C) -> Self;
-
-
- * https://github.com/amethyst/amethyst/blob/v0.15.3/amethyst_rendy/src/camera.rs
- *
- *     pub fn standard_3d(width: f32, height: f32) -> Self {
- *       Self::perspective(width / height, std::f32::consts::FRAC_PI_3, 0.125)
- *   }
- */
 
 /// Create a camera entity in the world.
 fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
-    let mut transform = Transform::default();
-    transform.set_translation_xyz(0.0, 0.0, 10.0);
+
+    // TODO The following code should be rewritten to use less variables. Its current implementation is useful
+    //      to see the types used in each stage of camera creation.
+    let camera_entity: EntityBuilder = world.create_entity();
 
     let camera_component: Camera = Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height());
-    println!("Result from creating camera:\n{:#?}", camera_component);
 
-
-    let camera_entity: EntityBuilder = world.create_entity();
+    let mut transform = Transform::default();
+    transform.set_rotation_y_axis(0.4);  // Angle specified in radians
+    transform.prepend_translation(Vector3::new(0.0, 3.0, 20.0));  // Translate before rotating camera
 
     camera_entity
         .with(camera_component)
@@ -107,7 +87,7 @@ fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
 /// Create a sphere entity and add it to the world.
 fn init_sphere(world: &mut World) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(3.0, 3.0, 0.0);
+    transform.set_translation_xyz(3.0, 0.0, 0.0);
 
     let mesh = world.exec(|loader: AssetLoaderSystemData<'_, Mesh>| {
         loader.load_from_data(
@@ -141,7 +121,7 @@ fn init_sphere(world: &mut World) {
 /// Create a cube entity and add it to the world.
 fn init_cube(world: &mut World) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(-3.0, -2.0, 0.0);
+    transform.set_translation_xyz(-3.0, 0.0, 0.0);
 
     //let p = Position::from([0.1, 0.1, 0.1]);
 
