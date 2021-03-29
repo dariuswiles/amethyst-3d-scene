@@ -1,6 +1,7 @@
 use amethyst::{
     assets::{AssetLoaderSystemData},
     core::transform::{Transform},
+    core::ecs::{EntityBuilder},
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
@@ -69,14 +70,36 @@ impl SimpleState for MyGameState {
 
 }
 
+/* From the docs:
+ *   amethyst/specs project - src/world/world_ext.rs:
+ *     fn create_entity(&mut self) -> EntityBuilder;
+ *
+ *
+ *   amethyst/specs project - src/world/mod.rs:
+ *     pub trait Builder {...}
+ *       fn with<C: Component + Send + Sync>(self, c: C) -> Self;
+
+
+ * https://github.com/amethyst/amethyst/blob/v0.15.3/amethyst_rendy/src/camera.rs
+ *
+ *     pub fn standard_3d(width: f32, height: f32) -> Self {
+ *       Self::perspective(width / height, std::f32::consts::FRAC_PI_3, 0.125)
+ *   }
+ */
+
 /// Create a camera entity in the world.
 fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
     let mut transform = Transform::default();
     transform.set_translation_xyz(0.0, 0.0, 10.0);
 
-    world
-        .create_entity()
-        .with(Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height()))
+    let camera_component: Camera = Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height());
+    println!("Result from creating camera:\n{:#?}", camera_component);
+
+
+    let camera_entity: EntityBuilder = world.create_entity();
+
+    camera_entity
+        .with(camera_component)
         .with(transform)
         .build();
 }
