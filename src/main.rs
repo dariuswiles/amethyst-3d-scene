@@ -8,7 +8,7 @@ use amethyst::{
         RenderingBundle,
     },
     ui::{RenderUi, UiBundle},
-    utils::application_root_dir,
+//    utils::application_root_dir,
     window::DisplayConfig,
 };
 
@@ -17,13 +17,12 @@ mod state;
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
-    let app_root = application_root_dir()?;
-    let assets_dir = app_root.join("assets");
+//     let app_root = application_root_dir()?;
+//     let assets_dir = app_root.join("assets");
 
     let mut display_config = DisplayConfig::default();
     display_config.title = "My first Amethyst 3D program".to_string();
     display_config.dimensions = Some((1000, 800));
-    //display_config.resizable = false;
 
 
     let game_data = GameDataBuilder::default()
@@ -40,7 +39,8 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderPbr3D::default()),
         )?;
 
-    let mut game = Application::new(assets_dir, state::MyGameState, game_data)?;
+    // First parameter is an empty string because we have no assets, so no need to specify an assets directory.
+    let mut game = Application::new("", state::MyGameState::default(), game_data)?;
     game.run();
 
     Ok(())

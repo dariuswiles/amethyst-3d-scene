@@ -9,12 +9,19 @@ use amethyst::{
     window::ScreenDimensions,
 };
 
-pub struct MyGameState;
+pub struct MyGameState {
+    pub existing_screen_dimensions: ScreenDimensions,
+}
 
 // Maybe useful for animation:
 // https://mtigley.dev/posts/sprite-animations-with-amethyst/
 //
 
+impl Default for MyGameState {
+    fn default() -> Self {
+        Self {existing_screen_dimensions: ScreenDimensions::new(0, 0, 1.0)}
+    }
+}
 
 
 impl SimpleState for MyGameState {
@@ -25,25 +32,30 @@ impl SimpleState for MyGameState {
         // Clone so we don't perform an immutable borrow, as that will stop us passing the world mutably to init_*
         // functions later.
         let screen_dimensions: ScreenDimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
+        self.existing_screen_dimensions = screen_dimensions.clone();
 
         init_camera(state_data.world, screen_dimensions);
         init_sphere(state_data.world);
         init_cube(state_data.world);
         initialize_light(state_data.world);
     }
-/*
+
+
     fn update(&mut self, state_data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         let screen_dimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
 
-        if screen_dimensions.width() != 1000. {
-            println!("User has altered screen dimensions.");
+        if (screen_dimensions.width(), screen_dimensions.height()) !=
+            (self.existing_screen_dimensions.width(), self.existing_screen_dimensions.height()) {
+
+            self.existing_screen_dimensions = screen_dimensions;
+            println!("User has altered screen dimensions to {} x {}", self.existing_screen_dimensions.width(), self.existing_screen_dimensions.height());
             //init_camera(state_data.world, screen_dimensions);
            // println!("{:#?}", *state_data.world.read_resource::<Camera>());
         }
 
         Trans::None
     }
-*/
+
 
     fn handle_event(&mut self, mut _state_data: StateData<'_, GameData<'_, '_>>, event: StateEvent) -> SimpleTrans {
         amethyst::start_logger(Default::default());
