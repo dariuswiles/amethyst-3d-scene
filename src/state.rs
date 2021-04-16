@@ -3,9 +3,9 @@ use amethyst::{
     core::transform::{Transform},
     input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
-    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
-        rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
-    },
+    renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape},
+    renderer::rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord},
+    utils::ortho_camera::{CameraNormalizeMode, CameraOrtho, CameraOrthoWorldCoordinates},
     window::ScreenDimensions,
 };
 
@@ -42,7 +42,7 @@ impl SimpleState for MyGameState {
 
 
     fn update(&mut self, state_data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
-        let screen_dimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
+/*        let screen_dimensions = (*state_data.world.read_resource::<ScreenDimensions>()).clone();
 
         if (screen_dimensions.width(), screen_dimensions.height()) !=
             (self.existing_screen_dimensions.width(), self.existing_screen_dimensions.height()) {
@@ -51,7 +51,7 @@ impl SimpleState for MyGameState {
             println!("User has altered screen dimensions to {} x {}", self.existing_screen_dimensions.width(), self.existing_screen_dimensions.height());
             //init_camera(state_data.world, screen_dimensions);
            // println!("{:#?}", *state_data.world.read_resource::<Camera>());
-        }
+        }*/
 
         Trans::None
     }
@@ -83,12 +83,24 @@ impl SimpleState for MyGameState {
 
 /// Create a camera entity in the world.
 fn init_camera(world: &mut World, screen_dimensions: ScreenDimensions) {
+    let (screen_width, screen_height) = (screen_dimensions.width(), screen_dimensions.height());
+
     let mut transform = Transform::default();
-    transform.set_translation_xyz(0.0, 0.0, 10.0);
+    transform.set_translation_xyz(screen_width / 2.0, screen_height / 2.0, 100.0);
 
     world
         .create_entity()
-        .with(Camera::standard_3d(screen_dimensions.width(), screen_dimensions.height()))
+        .with(Camera::standard_3d(screen_width, screen_height))
+        .with(CameraOrtho::new(
+            CameraNormalizeMode::Contain,
+            CameraOrthoWorldCoordinates {
+                left: -screen_width / 2.0,
+                right: screen_width / 2.0,
+                bottom: -screen_height / 2.0,
+                top: screen_height / 2.0,
+                far: 2000.0,
+                near: 0.125,
+            }))
         .with(transform)
         .build();
 }

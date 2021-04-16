@@ -8,7 +8,7 @@ use amethyst::{
         RenderingBundle,
     },
     ui::{RenderUi, UiBundle},
-//    utils::application_root_dir,
+    utils::ortho_camera::{CameraOrthoSystem},
     window::DisplayConfig,
 };
 
@@ -37,7 +37,8 @@ fn main() -> amethyst::Result<()> {
                 )
                 .with_plugin(RenderUi::default())
                 .with_plugin(RenderPbr3D::default()),
-        )?;
+        )?
+        .with(CameraOrthoSystem::default(), "ortho_camera_system", &[]);
 
     // First parameter is an empty string because we have no assets, so no need to specify an assets directory.
     let mut game = Application::new("", state::MyGameState::default(), game_data)?;
