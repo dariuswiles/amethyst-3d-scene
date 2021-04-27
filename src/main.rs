@@ -8,17 +8,23 @@ use amethyst::{
         RenderingBundle,
     },
     ui::{RenderUi, UiBundle},
-//    utils::application_root_dir,
+    utils::application_root_dir,
     window::DisplayConfig,
 };
 
 mod state;
+mod system;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
-//     let app_root = application_root_dir()?;
-//     let assets_dir = app_root.join("assets");
+    let app_root = application_root_dir()?;
+    let assets_dir = app_root.join("assets");
+    let key_binding_path = assets_dir.join("key_binding.ron");
+
+    let input_bundle = InputBundle::<StringBindings>::new()
+        .with_bindings_from_file(key_binding_path)?;
+
 
     let mut display_config = DisplayConfig::default();
     display_config.title = "My first Amethyst 3D program".to_string();
@@ -27,8 +33,9 @@ fn main() -> amethyst::Result<()> {
 
     let game_data = GameDataBuilder::default()
         .with_bundle(TransformBundle::new())?
-        .with_bundle(InputBundle::<StringBindings>::new())?
+        .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<StringBindings>::new())?
+        .with(system::MyMoveSystem, "my_move_system", &["input_system"])
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
@@ -39,8 +46,7 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderPbr3D::default()),
         )?;
 
-    // First parameter is an empty string because we have no assets, so no need to specify an assets directory.
-    let mut game = Application::new("", state::MyGameState::default(), game_data)?;
+    let mut game = Application::new(assets_dir, state::MyGameState::default(), game_data)?;
     game.run();
 
     Ok(())

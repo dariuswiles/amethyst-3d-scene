@@ -70,10 +70,6 @@ impl SimpleState for MyGameState {
                 println!("Escape key pressed");
                 return Trans::Quit;
             }
-
-            if let Some(event) = get_key(&event) {
-                println!("Received key event: {:?}", event);
-            }
         }
 
         Trans::None
