@@ -1,7 +1,7 @@
 use amethyst::{
     assets::{AssetLoaderSystemData},
     core::transform::{Transform},
-    input::{get_key, is_close_requested, is_key_down, VirtualKeyCode},
+    input::{is_close_requested, is_key_down, VirtualKeyCode},
     prelude::*,
     renderer::{Camera, light, Material, MaterialDefaults, Mesh, palette, shape,
         rendy::mesh::{Normal, MeshBuilder, Position, Tangent, TexCoord, },
