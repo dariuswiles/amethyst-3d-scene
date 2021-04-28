@@ -12,6 +12,10 @@ use crate::component::SpinMe;
 // Value to multiply movement amounts by so camera moves at the desired rate.
 pub const VELOCITY: f32 = 6.0;
 
+// Speed at which to spin entities that have the SpinMe component, in radians per second.
+pub const SPIN_SPEED: f32 = std::f32::consts::FRAC_PI_2;
+
+
 pub struct CameraMoveSystem;
 
 impl<'a> System<'a> for CameraMoveSystem {
@@ -60,7 +64,7 @@ impl<'a> System<'a> for SpinEntitySystem {
 
     fn run(&mut self, (mut transforms, spin_me_flag, time): Self::SystemData) {
         for (_spin_flag, transform) in (&spin_me_flag, &mut transforms).join() {
-            println!("Found something to spin!");
+            transform.append_rotation_y_axis(SPIN_SPEED * time.delta_seconds());
         }
     }
 }
