@@ -1,4 +1,5 @@
 use amethyst::{
+    core::timing::Time,
     core::transform::Transform,
     core::math::Vector3,
     ecs::{Join, Read, ReadStorage, System, WriteStorage},
@@ -6,9 +7,8 @@ use amethyst::{
     renderer::Camera,
 };
 
-// TODO Value to multiply movement amounts by so camera moves at the desired rate. Temporary until movement speed is
-//      based on time between frames.
-pub const MOVE_RATIO: f32 = 0.5;
+// Value to multiply movement amounts by so camera moves at the desired rate.
+pub const VELOCITY: f32 = 6.0;
 
 pub struct MyMoveSystem;
 
@@ -17,9 +17,10 @@ impl<'a> System<'a> for MyMoveSystem {
         WriteStorage<'a, Transform>,
         ReadStorage<'a, Camera>,
         Read<'a, InputHandler<StringBindings>>,
+        Read<'a, Time>,
     );
 
-    fn run(&mut self, (mut transforms, camera, input): Self::SystemData) {
+    fn run(&mut self, (mut transforms, camera, input, time): Self::SystemData) {
 
         for (_camera, transform) in (&camera, &mut transforms).join() {
 
@@ -28,15 +29,14 @@ impl<'a> System<'a> for MyMoveSystem {
 
             if let Some(v) = input.axis_value("vertical") {
                 if v != 0.0 {
-//                     println!("Movement detected on vertical axis, value is {}", v);
-                    z = -v * MOVE_RATIO;     // Reducing "z" moves us forward, so negate value obtained from input axis
+                    // Reducing "z" moves us forward, so negate value obtained from input axis
+                    z = -v * VELOCITY * time.delta_seconds();
                 }
             }
 
             if let Some(h) = input.axis_value("horizontal") {
                 if h != 0.0 {
-//                     println!("Movement detected on horizontal axis, value is {}", h);
-                    x = h * MOVE_RATIO;
+                    x = h * VELOCITY * time.delta_seconds();
                 }
             }
 
