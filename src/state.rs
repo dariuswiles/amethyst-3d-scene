@@ -9,6 +9,9 @@ use amethyst::{
     window::ScreenDimensions,
 };
 
+use crate::component::SpinMe;
+
+
 pub struct MyGameState {
     pub existing_screen_dimensions: ScreenDimensions,
 }
@@ -168,6 +171,7 @@ fn init_cube(world: &mut World) {
         .with(mesh)
         .with(material)
         .with(transform)
+        .with(SpinMe{})
         .build();
 }
 

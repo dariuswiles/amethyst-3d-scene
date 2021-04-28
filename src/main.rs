@@ -12,8 +12,9 @@ use amethyst::{
     window::DisplayConfig,
 };
 
-mod state;
-mod system;
+pub mod state;
+pub mod system;
+pub mod component;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -35,7 +36,8 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<StringBindings>::new())?
-        .with(system::MyMoveSystem, "my_move_system", &["input_system"])
+        .with(system::CameraMoveSystem, "camera_move_system", &["input_system"])
+        .with(system::SpinEntitySystem, "spin_entity_system", &[])
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(

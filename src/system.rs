@@ -7,12 +7,14 @@ use amethyst::{
     renderer::Camera,
 };
 
+use crate::component::SpinMe;
+
 // Value to multiply movement amounts by so camera moves at the desired rate.
 pub const VELOCITY: f32 = 6.0;
 
-pub struct MyMoveSystem;
+pub struct CameraMoveSystem;
 
-impl<'a> System<'a> for MyMoveSystem {
+impl<'a> System<'a> for CameraMoveSystem {
     type SystemData = (
         WriteStorage<'a, Transform>,
         ReadStorage<'a, Camera>,
@@ -42,6 +44,23 @@ impl<'a> System<'a> for MyMoveSystem {
 
             transform.append_translation(Vector3::new(x, 0.0, z));
 
+        }
+    }
+}
+
+
+pub struct SpinEntitySystem;
+
+impl<'a> System<'a> for SpinEntitySystem {
+    type SystemData = (
+        WriteStorage<'a, Transform>,
+        ReadStorage<'a, SpinMe>,
+        Read<'a, Time>,
+    );
+
+    fn run(&mut self, (mut transforms, spin_me_flag, time): Self::SystemData) {
+        for (_spin_flag, transform) in (&spin_me_flag, &mut transforms).join() {
+            println!("Found something to spin!");
         }
     }
 }
