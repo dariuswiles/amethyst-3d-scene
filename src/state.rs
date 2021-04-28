@@ -171,7 +171,7 @@ fn init_cube(world: &mut World) {
         .with(mesh)
         .with(material)
         .with(transform)
-        .with(SpinMe{})
+        .with(SpinMe{spin_rate: std::f32::consts::FRAC_PI_2})
         .build();
 }
 

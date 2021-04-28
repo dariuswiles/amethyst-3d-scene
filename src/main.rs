@@ -12,9 +12,9 @@ use amethyst::{
     window::DisplayConfig,
 };
 
-pub mod state;
-pub mod system;
-pub mod component;
+mod state;
+mod system;
+mod component;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
